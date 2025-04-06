@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AuthenticationController;
 use App\Policies\TaskPolicy;
 
 /*
@@ -18,11 +19,19 @@ use App\Policies\TaskPolicy;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
-Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-Route::get('/tasks/{task}', [TaskController::class, 'edit'])->name('tasks.edit');
-Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
-Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-Route::post('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
-Route::get('/taskshow', [TaskController::class, 'showCompleted'])->name('tasks.taskshow');
+Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index')->middleware('isLoggedIn');
+Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create')->middleware('isLoggedIn');
+Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store')->middleware('isLoggedIn');
+Route::get('/tasks/{task}', [TaskController::class, 'edit'])->name('tasks.edit')->middleware('isLoggedIn');
+Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update')->middleware('isLoggedIn');
+Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy')->middleware('isLoggedIn');
+Route::post('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete')->middleware('isLoggedIn');
+Route::get('/taskshow', [TaskController::class, 'showCompleted'])->name('tasks.taskshow')->middleware('isLoggedIn');
+
+Route::controller(AuthenticationController::class)->group(function(){
+    Route::get('/registration','registration')->middleware('alreadyLoggedIn');
+    Route::post('/registration-user','registerUser')->name('register-user');
+    Route::get('/login','login')->middleware('alreadyLoggedIn');
+    Route::post('/login-user','loginUser')->name('login-user');
+    Route::get('/logout','logout')->name('auth.logout');
+});

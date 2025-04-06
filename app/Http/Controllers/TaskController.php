@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Session;
 
 class TaskController extends Controller
 {
@@ -14,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::where('users_id', 2)->orderBy('created_at', 'desc')->simplePaginate(5);
+        $tasks = Task::where('users_id', Session::get('loginId'))->orderBy('created_at', 'desc')->simplePaginate(5);
         return view('tasks.index', compact('tasks'));
     }
 
@@ -41,7 +42,7 @@ class TaskController extends Controller
             // $request->image->move($uploadPath, $imageName);
         }
         Task::create([
-            'users_id' => 2,
+            'users_id' => Session::get('loginId'),
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'img_path' => $imageName,
@@ -113,7 +114,10 @@ class TaskController extends Controller
     }
     public function showCompleted(Task $task)
     {
-        $completedTasks = Task::where('completed' , true)->orderBy('updated_at', 'desc')->get();
+        $completedTasks = Task::where('completed' , true)
+            ->where('users_id', '=' , Session::get('loginId'))
+            ->orderBy('updated_at', 'desc')
+            ->get();
         return view('tasks.taskshow', compact('completedTasks'));
     }
 }

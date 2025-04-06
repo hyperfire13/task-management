@@ -10,6 +10,7 @@
 <div class="container">
     <br>
     <h1>Completed Tasks</h1>
+    <a href="{{ route('tasks.index') }}" class="btn btn-primary mb-3">Go back</a>
     <table class="table table-bordered">
         <thead>
             <tr>

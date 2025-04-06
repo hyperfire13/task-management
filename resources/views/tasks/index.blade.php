@@ -21,7 +21,7 @@
                 <span class="float-right">{{ $tasks->links() }}</span>
                 <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3">Create Task</a>
                 <a href="{{ route('tasks.taskshow') }}" class="btn btn-secondary mb-3">Show Completed Tasks</a>
-
+                <a href="{{ route('auth.logout') }}" class="btn btn-primary mb-3">Logout</a>
                 <table class="table  table-striped">
                     <thead>
                         <tr>

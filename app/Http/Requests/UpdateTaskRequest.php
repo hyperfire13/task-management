@@ -23,7 +23,7 @@ class UpdateTaskRequest extends FormRequest
     {
         return [
             // 'users_id' => 'required|numeric',
-            'title' => 'required|max:100|unique:tasks',
+            'title' => 'required|max:100|unique:tasks,title,'.$this->task->id,
             'description' => 'required',
             'fileImg' => 'image|mimes:jpeg,png,jpg,gif|max:4000',
         ];
