@@ -11,7 +11,7 @@ class UpdateTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // 'users_id' => 'required|numeric',
+            'title' => 'required|max:100|unique:tasks',
+            'description' => 'required',
+            'fileImg' => 'image|mimes:jpeg,png,jpg,gif|max:4000',
         ];
     }
 }

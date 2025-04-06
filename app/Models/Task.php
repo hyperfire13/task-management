@@ -16,6 +16,8 @@ class Task extends Model
         'priority',
         'due_date',
         'completed',
+        'img_path',
+        'completed_at'
     ];
 
     public function user() {

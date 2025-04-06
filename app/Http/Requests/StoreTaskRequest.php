@@ -23,9 +23,9 @@ class StoreTaskRequest extends FormRequest
     {
         return [
             // 'users_id' => 'required|numeric',
-            'title' => 'required|max:100',
+            'title' => 'required|max:100|unique:tasks',
             'description' => 'required',
-            'fileImg' => 'required|image|mimes:jpeg,png,jpg,gif|max:4000',
+            'fileImg' => 'image|mimes:jpeg,png,jpg,gif|max:4000',
         ];
     }
 }

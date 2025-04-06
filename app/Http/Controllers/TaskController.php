@@ -14,7 +14,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::where('users_id', 2)->orderBy('created_at', 'desc')->simplePaginate(15);
+        $tasks = Task::where('users_id', 2)->orderBy('created_at', 'desc')->simplePaginate(5);
         return view('tasks.index', compact('tasks'));
     }
 
@@ -31,16 +31,14 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request): RedirectResponse
     {
-        // Create the uploads directory if it doesn't exist
         $imageName = null;
-        $uploadPath = public_path('uploaded-images');
-        if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
-        }
+        $uploadPath = 'public/uploaded-images';
         // Store the image
         if ($request->file('fileImg')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move($uploadPath, $imageName);
+            $fileUpload = $request->file('fileImg');
+            $imageName = time() . '.' . $fileUpload->extension();
+            $fileUpload->storeAs($uploadPath, $imageName);
+            // $request->image->move($uploadPath, $imageName);
         }
         Task::create([
             'users_id' => 2,
@@ -66,7 +64,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+        return view('tasks.edit', compact('task'));
     }
 
     /**
@@ -74,7 +72,26 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        
+        $uploadPath = 'public/uploaded-images';
+        $updateArray = [
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'due_date' => null,
+        ];
+        // Store the image
+        if ($request->file('fileImg')) {
+            $imageName = null;
+            $fileUpload = $request->file('fileImg');
+            $imageName = time() . '.' . $fileUpload->extension();
+            $fileUpload->storeAs($uploadPath, $imageName);
+            $updateArray['img_path'] = $imageName;
+            // dd($updateArray);
+            // $request->image->move($uploadPath, $imageName);
+        }
+        $task->update($updateArray);
+
+        return redirect()->route('tasks.index')->with('success', 'Task Updated!');
     }
 
     /**
@@ -82,6 +99,21 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return redirect()->route('tasks.index')->with('success', 'Task Deleted!');
+    }
+
+    public function complete(Task $task)
+    {
+        $task->update([
+            'completed' => 1,
+            'completed_at' => now(),
+        ]);
+        return redirect()->route('tasks.index')->with('success', 'Marked Task as Completed!');
+    }
+    public function showCompleted(Task $task)
+    {
+        $completedTasks = Task::where('completed' , true)->orderBy('updated_at', 'desc')->get();
+        return view('tasks.taskshow', compact('completedTasks'));
     }
 }

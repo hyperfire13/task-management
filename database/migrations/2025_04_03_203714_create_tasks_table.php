@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('due_date')->nullable();
             $table->string('img_path', 255)->nullable();
             $table->boolean('completed')->default(0);
+            $table->date('completed_at')->nullable();
             $table->timestamps();
         });
     }
